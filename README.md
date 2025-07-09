@@ -18,7 +18,3 @@ An interactive web-based application to detect anomalies in network traffic usin
 🔗 **Check out the deployed app here**:  
 👉 [https://csiproject.streamlit.app](https://csiproject-vc244cqlgipvxqjn4wfb8y.streamlit.app/)
 
----
-
-## 🗂️ File Structure
-
