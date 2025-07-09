@@ -12,11 +12,9 @@ st.set_page_config(page_title="Network Traffic Anomaly Detection", layout="wide"
 st.title("🚨 Network Traffic Anomaly Detection")
 st.markdown("Detect security threats using **Isolation Forest** and **Autoencoders**.")
 
-# Sidebar: Upload CSV
 st.sidebar.header("📁 Upload CSV")
 uploaded_file = st.sidebar.file_uploader("Upload a preprocessed network traffic CSV", type=["csv"])
 
-# Load models
 @st.cache_resource
 def load_models():
     try:
@@ -32,18 +30,15 @@ if uploaded_file:
     st.subheader("🧾 Raw Data Preview")
     st.dataframe(df.head())
 
-    # Preprocess
     df_clean = df.select_dtypes(include=[np.number]).dropna()
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(df_clean)
 
     isf, ae = load_models()
 
-    # Isolation Forest
     df['isf_anomaly'] = isf.predict(X_scaled)
     df['isf_anomaly'] = df['isf_anomaly'].apply(lambda x: 1 if x == -1 else 0)
 
-    # Autoencoder
     reconstructions = ae.predict(X_scaled)
     mse = np.mean(np.power(X_scaled - reconstructions, 2), axis=1)
     threshold = np.percentile(mse, 95)
@@ -51,7 +46,6 @@ if uploaded_file:
     df['ae_mse'] = mse
     df['ae_anomaly'] = (df['ae_mse'] > threshold).astype(int)
 
-    # Threshold Info
     st.sidebar.markdown("### ⚙️ Threshold")
     st.sidebar.write(f"Autoencoder MSE Threshold: `{threshold:.4f}`")
 
@@ -91,7 +85,6 @@ if uploaded_file:
     else:
         st.dataframe(df)
 
-    # Download button
     st.download_button("📥 Download Results", df.to_csv(index=False), file_name="anomaly_results.csv")
 
 else:
